@@ -15,6 +15,7 @@ const TransactionInfoCard = ({
     amount,
     type,
     hideDeleteBtn,
+    onDelete
 }) => {
   const getAmountStyles = () => 
     type === "income" ? "bg-green-100 text-green-500" : "bg-red-50 text-red-500";

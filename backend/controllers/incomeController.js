@@ -18,7 +18,7 @@ const Income = require('../models/Income');
                 icon,
                 source,
                 amount,
-                date: new Date(date) // Use provided date or current date
+                date: new Date(date ) // Use provided date or current date
             });
 
             await newIncome.save();
