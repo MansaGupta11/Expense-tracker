@@ -5,6 +5,10 @@ import axiosInstance from '../../utils/axiosInstance';
 import ExpenseOverview from '../../components/Expense/ExpenseOverview';
 import AddExpenseForm from '../../components/Expense/AddExpenseForm';
 import Modal from '../../components/Modal';
+import { API_PATHS } from '../../utils/apiPaths';
+import { toast } from 'react-hot-toast';
+import ExpenseList from '../../components/Expense/ExpenseList';
+
 
 
 const Expense = () => {
@@ -78,6 +82,24 @@ const Expense = () => {
     }
   };
 
+   //delete Expense
+  const deleteExpense = async (id) => {
+    try {
+      await axiosInstance.delete(API_PATHS.EXPENSE.DELETE_EXPENSE(id));
+      setOpenDeleteAlert({ show: false, data: null});
+      toast.success("Expense details deleted Successfully");
+      fetchExpenseDetails();
+    } catch(error){
+      console.error(
+        "Error deleting Expense:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
+
+  //handle download expense details
+  const handleDownloadExpenseDetails = async () => {};
+
   useEffect(() => {
     fetchExpenseDetails();
 
@@ -94,6 +116,14 @@ const Expense = () => {
               onExpenseIncome={() => setOpenAddExpenseModal(true)}
               />
           </div>
+
+          <ExpenseList 
+            transactions={expenseData}
+            onDelete ={(id) => {
+              setOpenDeleteAlert({ show: true, data: id });
+            }}
+            onDownload = {handleDownloadExpenseDetails}
+            />
           </div>
 
           <Modal 
