@@ -8,6 +8,7 @@ import Modal from '../../components/Modal';
 import { API_PATHS } from '../../utils/apiPaths';
 import { toast } from 'react-hot-toast';
 import ExpenseList from '../../components/Expense/ExpenseList';
+import DeleteAlert from '../../components/DeleteAlert';
 
 
 
@@ -98,7 +99,30 @@ const Expense = () => {
   };
 
   //handle download expense details
-  const handleDownloadExpenseDetails = async () => {};
+  const handleDownloadExpenseDetails = async () => {
+    try {
+      const response = await axiosInstance.get(
+        API_PATHS.EXPENSE.DOWNLOAD_EXPENSE,
+        {
+          responseType: "blob",
+        }
+      );
+
+      //create a url for thr blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "expense_details.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error("Error downloading expense details:", error);
+      toast.error("Failed to download expense details.Please try again");
+    }
+  };
 
   useEffect(() => {
     fetchExpenseDetails();
@@ -133,6 +157,17 @@ const Expense = () => {
              >
               <AddExpenseForm onAddExpense = {handleAddExpense} />
              </Modal>
+
+          <Modal 
+        isOpen={openDeleteAlert.show}
+        onClose={() => setOpenDeleteAlert({ show: false, data: null})}
+        title="Delete Expense"
+        >
+          <DeleteAlert
+            content="Are you sure you want to delete this expense detail? "
+            onDelete={() => deleteExpense(openDeleteAlert.data)}
+            />
+        </Modal>
           </div>
       </DashboardLayout>
   );
